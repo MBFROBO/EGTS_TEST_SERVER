@@ -33,14 +33,11 @@ async def client_handle(connect:object):
     """
     loop = asyncio.get_event_loop()
     request = None
-    while request != 'quit':
+    while request !=  STOP_SIGNAL:
         request = (await loop.sock_recv(connect, COUNT_RECV_BYTES))
         logging.info('Посылка принята')
         
         response = parse_data(request)
-        
-        if str(request) == STOP_SIGNAL:
-            connect.close()
         
         await loop.sock_sendall(connect, response)
     connect.close()
