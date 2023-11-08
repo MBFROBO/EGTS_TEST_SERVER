@@ -15,7 +15,7 @@ if os.path.exists(dotenv_path): load_dotenv(dotenv_path)
 HOST = os.getenv('IP')
 PORT = int(os.getenv('PORT'))
 COUNT_RECV_BYTES = 1024     #число принятых байт
-STOP_SIGNAL = 'СТОП' # стоп сигнал
+STOP_SIGNAL = 'СТОП' #
 
 
 def parse_data(request) -> str:
@@ -33,11 +33,14 @@ async def client_handle(connect:object):
     """
     loop = asyncio.get_event_loop()
     request = None
-    while request !=  STOP_SIGNAL:
+    while request != 'quit':
         request = (await loop.sock_recv(connect, COUNT_RECV_BYTES))
         logging.info('Посылка принята')
         
         response = parse_data(request)
+        
+        if str(request) == STOP_SIGNAL:
+            connect.close()
         
         await loop.sock_sendall(connect, response)
     connect.close()
